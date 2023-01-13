@@ -1,0 +1,14 @@
+name: autocoder
+run-name: Example workflow
+on: [push]
+jobs:
+  python_script:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+
+      - run: pip install -r requirements.txt
+      - run: python testscript.py
