@@ -83,18 +83,6 @@ REDUCED_FEATURESET = ['maintainer', 'issued', 'title_for_slug',
 # FUNCTIONS --------------------------------------------------------------------------------------------------- # 
 
 
-# def get_limited_package_list(limit=10, offset=0):
-#     """Request partial package list from CKAN API with limit and offset"""
-#     url = CKAN_API_LINK + f"?limit={limit}&offset={offset}"
-#     res = requests.get(url)
-#     data = json.loads(res.content)
-#     data = pd.DataFrame(pd.json_normalize(data["result"]))
-#     # save with date to allow for later error and change analysis
-#     with open(f"{METADATA_FOLDER}{TODAY_DATE}.json", "wb") as file:
-#         file.write(res.content)
-#     return data
-
-
 def get_full_package_list(limit=500, sleep=2):
     """Get full package list from CKAN API"""
     offset = 0
@@ -110,7 +98,6 @@ def get_full_package_list(limit=500, sleep=2):
         frames.append(data)
         offset += limit
         time.sleep(sleep)
-        break
     data = pd.concat(frames)
     data.reset_index(drop=True, inplace=True)
     return data
