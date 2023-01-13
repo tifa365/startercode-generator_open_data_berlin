@@ -10,5 +10,11 @@ jobs:
         with:
           python-version: '3.8'
       - run: pip install -r requirements.txt
-      - run: ls -a
+      - run: mkdir 01_r-markdown
+      - run: mkdir 02_python
+      - run: touch 02_python/test.txt
       - run: python testscript.py
+      - uses: actions/upload-artifact@v3
+        with:
+          name: test.txt
+          path: 02_python/
