@@ -12,7 +12,7 @@ import os
 from datetime import datetime
 import time
 import copy
-from tqdm.notebook import tqdm
+from tqdm import tqdm
 
 from bs4 import BeautifulSoup as bs4
 
