@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ PAT }}
+          token: ${{ secrets.PAT }}
 
       - uses: actions/setup-python@v4
         with:
