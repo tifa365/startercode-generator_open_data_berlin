@@ -1,20 +1,23 @@
 name: autocoder
-run-name: Example workflow
+run-name: Auto update repo
 on: [push]
 jobs:
   python_script:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
+
       - run: pip install -r requirements.txt
       - run: mkdir 01_r-markdown
+      - run: touch 01_r-markdown/test.txt
       - run: mkdir 02_python
       - run: touch 02_python/test.txt
       - run: python testscript.py
-      - uses: actions/upload-artifact@v3
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          name: test.txt
-          path: 02_python/
+          commit_message: Update all files
