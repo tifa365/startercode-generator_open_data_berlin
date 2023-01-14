@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ github.PAT }}
+          token: ${{ PAT }}
 
       - uses: actions/setup-python@v4
         with:
