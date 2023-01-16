@@ -16,8 +16,10 @@ jobs:
 
       - run: pip install -r requirements.txt
       - run: pwd
-      - run: cd _work
+      - run: ls -a
+      - run: cd _work/
       - run: pwd
+      - run: ls -a
       - run: python updater.py
       - run: cd
       - run: pwd
