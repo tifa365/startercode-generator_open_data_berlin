@@ -1,8 +1,4 @@
 import pandas as pd
-pd.options.mode.chained_assignment = None
-pd.options.display.max_rows = 500
-pd.options.display.max_seq_items = 500
-
 import numpy as np
 import requests
 import json
