@@ -18,7 +18,7 @@ jobs:
       - run: python updater.py
 
       - name: Push generated files to target repository
-        uses: nkoppel/push-files-to-another-repository
+        uses: nkoppel/push-files-to-another-repository@1.1
         env:
           API_TOKEN_GITHUB: ${{ secrets.PAT }}
         with:
