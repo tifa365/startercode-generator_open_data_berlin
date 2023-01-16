@@ -47,6 +47,7 @@ TEMPLATE_RMARKDOWN = "template_rmarkdown.Rmd"
 METADATA_FOLDER = "_metadata_json/"
 
 TODAY_DATE = datetime.today().strftime('%Y-%m-%d')
+TODAY_DATETIME = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
 
 # set max length of dataset title in markdown table
 TITLE_MAX_CHARS = 200
@@ -303,7 +304,7 @@ def get_header(dataset_count):
     header = re.sub("{{ PROVIDER }}", PROVIDER, header)
     header = re.sub("{{ DATA_PORTAL }}", PROVIDER_LINK, header)
     header = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), header)
-    header = re.sub("{{ TODAY_DATE }}", TODAY_DATE, header)
+    header = re.sub("{{ TODAY_DATE }}", TODAY_DATETIME, header)
     return header
 
 
@@ -316,7 +317,7 @@ def create_readme(dataset_count):
     readme = re.sub("{{ DATA_PORTAL }}", PROVIDER_LINK, readme)
     gh_page = f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}/"
     readme = re.sub("{{ GITHUB_PAGE }}", gh_page, readme)
-    readme = re.sub("{{ TODAY_DATE }}", TODAY_DATE, readme)
+    readme = re.sub("{{ TODAY_DATE }}", TODAY_DATETIME, readme)
     with open(f"{TEMP_PREFIX}README.md", "w") as file:
         file.write(readme)
 

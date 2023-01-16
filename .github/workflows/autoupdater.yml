@@ -27,21 +27,4 @@ jobs:
           destination-repository-name: 'starter-code-opendataswiss'
           target-branch: main
           commit-message: "Update all files"
-
-
-
-
-
-
-      # - uses: GuillaumeFalourd/copy-push-files@v1
-      #   with:
-      #     commit_message: auto update all files
-      #     target_branch: main
-      #     source_files: index.md README.md 01_r-markdown 02_python
-      #     remote_repository: https://github.com/rnckp/starter-code-opendataswiss
-      #     access_token: ${{ secrets.PAT }}
-
-
-      # - uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     commit_message: Update all files 
+          
