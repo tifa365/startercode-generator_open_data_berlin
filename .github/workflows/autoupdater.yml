@@ -24,7 +24,7 @@ jobs:
         with:
           source-directory: '_work'
           destination-github-username: 'rnckp'
-          destination-repository-name: 'starter-code-opendataswiss'
+          destination-repository-name: 'starter-code_opendataswiss'
           target-branch: main
-          commit-message: "Update all files"
+          commit-message: "Updates"
           
