@@ -26,6 +26,10 @@ jobs:
           destination-github-username: 'rnckp'
           destination-repository-name: 'starter-code-opendataswiss'
           target-branch: main
+          commit-message: "Update all files"
+
+
+
 
 
 
