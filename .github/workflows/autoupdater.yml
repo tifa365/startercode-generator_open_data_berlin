@@ -18,7 +18,7 @@ jobs:
       - run: python updater.py
 
       - name: Push generated files to target repository
-        uses: nkoppel/push-files-to-another-repository@1.1.0
+        uses: nkoppel/push-files-to-another-repository@1.1.1
         env:
           API_TOKEN_GITHUB: ${{ secrets.PAT }}
         with:
@@ -27,6 +27,7 @@ jobs:
           destination-branch: main
           destination-repository: starter-code-opendataswiss
           commit-message: auto update all files
+
 
 
       # - uses: GuillaumeFalourd/copy-push-files@v1
