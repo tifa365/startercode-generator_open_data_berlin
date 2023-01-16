@@ -1,5 +1,5 @@
 name: autoupdater
-run-name: Auto update starter code repo opendata.swiss
+run-name: autoupdater
 on: [push]
 jobs:
   python_script:
@@ -14,9 +14,9 @@ jobs:
           python-version: '3.8'
 
       - run: pip install -r requirements.txt
-      # - run: mkdir 01_r-markdown
+      - run: mkdir 01_r-markdown
       - run: touch 01_r-markdown/test1.txt
-      # - run: mkdir 02_python
+      - run: mkdir 02_python
       - run: touch 02_python/test1.txt
       - run: python testscript.py
 
