@@ -192,7 +192,7 @@ def create_python_notebooks(data):
     """Create Jupyter Notebooks with Python starter code"""
     for idx in tqdm(data.index):
         # open template
-        with open(f"{TEMPLATE_FOLDER}{TEMPLATE_PYTHON}") as file:
+        with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_PYTHON}") as file:
             py_nb = file.read()
 
         # populate template with metadata
@@ -247,7 +247,7 @@ def create_rmarkdown(data):
     """Create R Markdown files with R starter code"""
     for idx in tqdm(data.index):
         # open template
-        with open(f"{TEMPLATE_FOLDER}{TEMPLATE_RMARKDOWN}") as file:
+        with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_RMARKDOWN}") as file:
             rmd = file.read()
 
         # populate template with metadata
