@@ -4,6 +4,7 @@ on: [push]
 jobs:
   python_script:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
         with:
@@ -14,12 +15,15 @@ jobs:
           python-version: '3.8'
 
       - run: pip install -r requirements.txt
-      # - run: mkdir 01_r-markdown
-      # - run: touch 01_r-markdown/test1.txt
-      # - run: mkdir 02_python
-      # - run: touch 02_python/test1.txt
       - run: python updater.py
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - uses: GuillaumeFalourd/copy-push-files@v1
         with:
-          commit_message: Update all files 
+          source_files: index.md README.md 01_r-markdown 02_python
+          remote_repository: https://github.com/rnckp/starter-code-opendataswiss
+          access_token: ${{ secrets.PAT }}
+
+
+      # - uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     commit_message: Update all files 
