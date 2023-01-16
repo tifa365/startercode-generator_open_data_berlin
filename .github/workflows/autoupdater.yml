@@ -17,13 +17,25 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python updater.py
 
-      - uses: GuillaumeFalourd/copy-push-files@v1
+      - name: Push generated files to target repository
+        uses: nkoppel/push-files-to-another-repository@1.1.0
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.PAT }}
         with:
-          commit_message: auto update all files
-          target_branch: main
-          source_files: index.md README.md 01_r-markdown 02_python
-          remote_repository: https://github.com/rnckp/starter-code-opendataswiss
-          access_token: ${{ secrets.PAT }}
+          source-files: index.md README.md 01_r-markdown 02_python
+          destination-username: rnckp
+          destination-branch: main
+          destination-repository: starter-code-opendataswiss
+          commit-message: auto update all files
+
+
+      # - uses: GuillaumeFalourd/copy-push-files@v1
+      #   with:
+      #     commit_message: auto update all files
+      #     target_branch: main
+      #     source_files: index.md README.md 01_r-markdown 02_python
+      #     remote_repository: https://github.com/rnckp/starter-code-opendataswiss
+      #     access_token: ${{ secrets.PAT }}
 
 
       # - uses: stefanzweifel/git-auto-commit-action@v4
