@@ -18,7 +18,7 @@ jobs:
       - run: touch 01_r-markdown/test1.txt
       - run: mkdir 02_python
       - run: touch 02_python/test1.txt
-      - run: python testscript.py
+      - run: python updater.py
 
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
