@@ -15,7 +15,7 @@ jobs:
           python-version: '3.8'
 
       - run: pip install -r requirements.txt
-      - run: python _work/updater.py
+      - run: python updater.py
 
       - name: Push generated files to target repository
         uses: cpina/github-action-push-to-another-repository@main

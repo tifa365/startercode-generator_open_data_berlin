@@ -192,7 +192,7 @@ def create_python_notebooks(data):
     """Create Jupyter Notebooks with Python starter code"""
     for idx in tqdm(data.index):
         # open template
-        with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_PYTHON}") as file:
+        with open(f"{TEMPLATE_FOLDER}{TEMPLATE_PYTHON}") as file:
             py_nb = file.read()
 
         # populate template with metadata
@@ -247,7 +247,7 @@ def create_rmarkdown(data):
     """Create R Markdown files with R starter code"""
     for idx in tqdm(data.index):
         # open template
-        with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_RMARKDOWN}") as file:
+        with open(f"{TEMPLATE_FOLDER}{TEMPLATE_RMARKDOWN}") as file:
             rmd = file.read()
 
         # populate template with metadata
@@ -292,7 +292,7 @@ def create_rmarkdown(data):
             
 def get_header(dataset_count):
     """Retrieve header template and populate with date and count of data records"""
-    with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_HEADER}") as file:
+    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_HEADER}") as file:
         header = file.read()
     gh_page = f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}/"
     header = re.sub("{{ GITHUB_PAGE }}", gh_page, header)
@@ -309,7 +309,7 @@ def get_header(dataset_count):
 
 def create_readme(dataset_count):
     """Retrieve README template and populate with metadata"""
-    with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_README}") as file:
+    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_README}") as file:
         readme = file.read()
     readme = re.sub("{{ PROVIDER }}", PROVIDER, readme)
     readme = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), readme)   
