@@ -32,7 +32,7 @@ LANGUAGE = "de"
 
 # set constants in regard to GitHub account and repo
 GITHUB_ACCOUNT = "rnckp"
-REPO_NAME = "starter-code-opendataswiss"
+REPO_NAME = "starter-code_opendataswiss"
 REPO_BRANCH = "main"
 REPO_RMARKDOWN_OUTPUT = "01_r-markdown/"
 REPO_PYTHON_OUTPUT = "02_python/"
