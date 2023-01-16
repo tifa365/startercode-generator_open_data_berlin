@@ -36,6 +36,7 @@ REPO_NAME = "starter-code-opendataswiss"
 REPO_BRANCH = "main"
 REPO_RMARKDOWN_OUTPUT = "01_r-markdown/"
 REPO_PYTHON_OUTPUT = "02_python/"
+TEMP_PREFIX = "_work/"
 
 # set local folders and file names
 TEMPLATE_FOLDER = "_templates/"
@@ -238,7 +239,7 @@ def create_python_notebooks(data):
         py_nb["cells"][dist_cell_idx]["source"] =  code_block
 
         # save to disk
-        with open(f'{REPO_PYTHON_OUTPUT}{data.loc[idx, "id"]}.ipynb', 'w') as file:
+        with open(f'{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{data.loc[idx, "id"]}.ipynb', 'w') as file:
             file.write(json.dumps(py_nb))         
 
 
@@ -285,13 +286,13 @@ def create_rmarkdown(data):
         rmd = rmd.replace("{{ DISTRIBUTIONS }}", "".join(code_block))
 
         # save to disk
-        with open(f'{REPO_RMARKDOWN_OUTPUT}{data.loc[idx, "id"]}.Rmd', 'w') as file:
+        with open(f'{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{data.loc[idx, "id"]}.Rmd', 'w') as file:
             file.write("".join(rmd))
 
             
 def get_header(dataset_count):
     """Retrieve header template and populate with date and count of data records"""
-    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_HEADER}") as file:
+    with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_HEADER}") as file:
         header = file.read()
     gh_page = f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}/"
     header = re.sub("{{ GITHUB_PAGE }}", gh_page, header)
@@ -308,7 +309,7 @@ def get_header(dataset_count):
 
 def create_readme(dataset_count):
     """Retrieve README template and populate with metadata"""
-    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_README}") as file:
+    with open(f"{TEMP_PREFIX}{TEMPLATE_FOLDER}{TEMPLATE_README}") as file:
         readme = file.read()
     readme = re.sub("{{ PROVIDER }}", PROVIDER, readme)
     readme = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), readme)   
@@ -316,7 +317,7 @@ def create_readme(dataset_count):
     gh_page = f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}/"
     readme = re.sub("{{ GITHUB_PAGE }}", gh_page, readme)
     readme = re.sub("{{ TODAY_DATE }}", TODAY_DATE, readme)
-    with open(f"README.md", "w") as file:
+    with open(f"{TEMP_PREFIX}README.md", "w") as file:
         file.write(readme)
 
 
@@ -351,7 +352,7 @@ def create_overview(data, header):
 
     md_doc = "".join(md_doc)
 
-    with open(f"index.md", "w") as file:
+    with open(f"{TEMP_PREFIX}index.md", "w") as file:
         file.write(md_doc)
 
 
