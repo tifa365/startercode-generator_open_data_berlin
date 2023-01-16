@@ -15,7 +15,9 @@ jobs:
           python-version: '3.8'
 
       - run: pip install -r requirements.txt
+      - run: pwd
       - run: cd _work
+      - run: pwd
       - run: python updater.py
       - run: cd
       - run: pwd
