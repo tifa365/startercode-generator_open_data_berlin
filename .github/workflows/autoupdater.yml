@@ -1,6 +1,10 @@
 name: autoupdater
 run-name: autoupdater
-on: [push]
+on:
+  schedule:
+    - cron:  '30 3 * * *'
+
+
 jobs:
   python_script:
     runs-on: ubuntu-latest
