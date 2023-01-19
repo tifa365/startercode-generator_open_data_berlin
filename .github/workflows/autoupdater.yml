@@ -1,9 +1,9 @@
 name: autoupdater
 run-name: autoupdater
 on:
+  push:
   schedule:
     - cron:  '30 3 * * *'
-
 
 jobs:
   python_script:
