@@ -1,15 +1,12 @@
-# IMPORTS ----------------------------------------------------------------------------------------------------- # 
+# IMPORTS -------------------------------------------------------------------- #
 
 import pandas as pd
 import numpy as np
 import requests
 import json
 import re
-import glob
-import os
 from datetime import datetime
 import time
-import copy
 from tqdm import tqdm
 
 from bs4 import BeautifulSoup as bs4
@@ -18,7 +15,7 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-# CONSTANTS --------------------------------------------------------------------------------------------------- # 
+# CONSTANTS ------------------------------------------------------------------ #
 
 # set constants for data provider and data API
 PROVIDER = "opendata.swiss"
@@ -37,8 +34,10 @@ TEMP_PREFIX = "_work/"
 
 # set local folders and file names
 TEMPLATE_FOLDER = "_templates/"
-TEMPLATE_README = "template_md_readme.md" # <- template for the README.md in the repo
-TEMPLATE_HEADER = "template_md_header.md" # <- header for list overview that is rendered as a GitHub page
+# template for the README.md in the repo
+TEMPLATE_README = "template_md_readme.md"
+# header for list overview that is rendered as a GitHub page
+TEMPLATE_HEADER = "template_md_header.md"
 TEMPLATE_PYTHON = "template_python.ipynb"
 TEMPLATE_RMARKDOWN = "template_rmarkdown.Rmd"
 METADATA_FOLDER = "_metadata_json/"
@@ -53,32 +52,32 @@ TITLE_MAX_CHARS = 200
 SORT_TABLE_BY = f"title.{LANGUAGE}"
 
 # select keys in metadata for dataset and distributions
-KEYS_DATASET = ['publisher', f'organization.display_name.{LANGUAGE}', 
+KEYS_DATASET = ['publisher', f'organization.display_name.{LANGUAGE}',
                 "organization.url", "maintainer", "maintainer_email",
-                f'keywords.{LANGUAGE}', 'issued', 'metadata_created', 
+                f'keywords.{LANGUAGE}', 'issued', 'metadata_created',
                 'metadata_modified']
-KEYS_DISTRIBUTIONS = ['package_id', "description", 'issued', 
+KEYS_DISTRIBUTIONS = ['package_id', "description", 'issued',
                       'modified', "rights"]
 
-# select relevant column names to reduce dataset 
-REDUCED_FEATURESET = ['maintainer', 'issued', 'title_for_slug', 
+# select relevant column names to reduce dataset
+REDUCED_FEATURESET = ['maintainer', 'issued', 'title_for_slug',
                       'maintainer_email', 'contact_points', 'id',
-                      'metadata_created', 'metadata_modified', 
+                      'metadata_created', 'metadata_modified',
                       'resources', 'groups', 'publisher', 'name',
-                      'language', 'modified', 'url', 'identifier', 
-                      'keywords.fr', 'keywords.de', 'keywords.en', 'keywords.it', 
-                      'display_name.fr', 'display_name.de', 'display_name.en', 'display_name.it', 
+                      'language', 'modified', 'url', 'identifier',
+                      'keywords.fr', 'keywords.de', 'keywords.en', 'keywords.it',
+                      'display_name.fr', 'display_name.de', 'display_name.en', 'display_name.it',
                       'description.fr', 'description.de', 'description.en', 'description.it',
                       'organization.display_name.fr', 'organization.display_name.de',
                       'organization.display_name.en', 'organization.display_name.it',
-                      'organization.name',  
+                      'organization.name',
                       'organization.title.fr', 'organization.title.de',
                       'organization.title.en', 'organization.title.it',
-                      'title.fr', 'title.de', 'title.en', 'title.it', 
+                      'title.fr', 'title.de', 'title.en', 'title.it',
                       'metadata', 'contact', 'distributions', 'distribution_links']
 
 
-# FUNCTIONS --------------------------------------------------------------------------------------------------- # 
+# FUNCTIONS ------------------------------------------------------------------ #
 
 def get_full_package_list(limit=500, sleep=2):
     """Get full package list from CKAN API"""
@@ -107,8 +106,8 @@ def has_csv_distribution(dists):
         return csv_dists
     else:
         return np.nan
-    
-    
+
+
 def filter_csv(data):
     """Remove all datasets that have no CSV distribution"""
     data.resources = data.resources.apply(has_csv_distribution)
@@ -120,23 +119,23 @@ def clean_features(data):
     """Clean various features"""
     # reduce publisher data to name
     data.publisher = data.publisher.apply(lambda x: json.loads(x)["name"])
-    
+
     # reduce tags to tag names
     data.tags = data.tags.apply(lambda x: [tag["name"] for tag in x])
-    
+
     # replace empty urls with NA message
     data[data["organization.url"] == ""]["organization.url"] = "None provided"
-    
+
     # if title in target language does not exist try to fill in english title
-    idx = data[data[f"title.{LANGUAGE}"]==""].index
-    data.loc[idx, f"title.{LANGUAGE}"] = data[f"title.en"]
-    
+    idx = data[data[f"title.{LANGUAGE}"] == ""].index
+    data.loc[idx, f"title.{LANGUAGE}"] = data["title.en"]
+
     # remove HTML tags from description
     data[f"description.{LANGUAGE}"] = data[f"description.{LANGUAGE}"].apply(lambda x: bs4(x, "html.parser").text)
-    
+
     # strip whitespace from title
     data[f"title.{LANGUAGE}"] = data[f"title.{LANGUAGE}"].map(lambda x: x.strip())
-    
+
     return data
 
 
@@ -147,12 +146,12 @@ def prepare_data_for_codebooks(data):
     data["contact"] = None
     data["distributions"] = None
     data["distribution_links"] = None
-    
+
     # iterate over datasets and create additional data for markdown and code cells
     for idx in tqdm(data.index):
         md = [f"- **{k.capitalize()}** `{data.loc[idx, k]}`\n" for k in KEYS_DATASET]
         data.loc[idx, "metadata"] = "".join(md)
-        
+
         contact_points = [x for x in data.loc[idx, "contact_points"][0].values() if x != {}]
         data.loc[idx, "contact"] = " | ".join(contact_points)
 
@@ -173,15 +172,15 @@ def prepare_data_for_codebooks(data):
             # in a few cases the dataset has no download_url but rather is available at "url"
             csv_url = dist.get("download_url", dist["url"])
             tmp_links.append(csv_url)
-            
+
         # use .at[] – https://stackoverflow.com/a/53299945/7117003
         data.at[idx, "distributions"] = tmp_dists
         data.at[idx, "distribution_links"] = tmp_links
-    
+
     # sort values for table
     data.sort_values(f"{SORT_TABLE_BY}", inplace=True)
     data.reset_index(drop=True, inplace=True)
-    
+
     return data[REDUCED_FEATURESET]
 
 
@@ -194,32 +193,32 @@ def create_python_notebooks(data):
 
         # populate template with metadata
         py_nb = py_nb.replace("{{ PROVIDER }}", PROVIDER)
-        
+
         title = re.sub("\"", "\'", data.loc[idx, f"title.{LANGUAGE}"])
         py_nb = py_nb.replace("{{ DATASET_TITLE }}", title)
-        
+
         description = data.loc[idx, f"description.{LANGUAGE}"]
         description = re.sub("\"", "\'", description)
         description = re.sub("\\\\", "|", description)
         py_nb = py_nb.replace("{{ DATASET_DESCRIPTION }}", description)
-        
-        py_nb = py_nb.replace("{{ DATASET_IDENTIFIER }}", data.loc[idx, "identifier"])        
-        py_nb = py_nb.replace("{{ DATASET_METADATA }}", re.sub("\"", "\'", data.loc[idx, "metadata"]))          
+
+        py_nb = py_nb.replace("{{ DATASET_IDENTIFIER }}", data.loc[idx, "identifier"])
+        py_nb = py_nb.replace("{{ DATASET_METADATA }}", re.sub("\"", "\'", data.loc[idx, "metadata"]))
         py_nb = py_nb.replace("{{ DISTRIBUTION_COUNT }}", str(len(data.loc[idx, "distributions"])))
-        
+
         url = f'[Direct link by {PROVIDER} for dataset]({BASELINK_DATAPORTAL}{data.loc[idx, "name"]})'
         py_nb = py_nb.replace("{{ DATASHOP_LINK_PROVIDER }}", url)
-        
+
         if data.loc[idx, "url"] != None:
             org_name = f"organization.display_name.{LANGUAGE}"
             url = data.loc[idx, "url"]
             url = f'[Direct link by {data.loc[idx, org_name]} for dataset]({url})'
             py_nb = py_nb.replace("{{ DATASHOP_LINK_ORGANIZATION }}", url)
-        
+
         py_nb = py_nb.replace("{{ CONTACT }}", data.loc[idx, "contact"])
 
         py_nb = json.loads(py_nb, strict=False)
- 
+
         # find code cell for dataset imports
         for id_cell, cell in enumerate(py_nb["cells"]):
             if cell["id"] == "0":
@@ -233,11 +232,11 @@ def create_python_notebooks(data):
             code_block.append(code)
         # populate code block with data for all distributions
         code_block = "".join(code_block)
-        py_nb["cells"][dist_cell_idx]["source"] =  code_block
+        py_nb["cells"][dist_cell_idx]["source"] = code_block
 
         # save to disk
         with open(f'{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{data.loc[idx, "id"]}.ipynb', 'w') as file:
-            file.write(json.dumps(py_nb))         
+            file.write(json.dumps(py_nb))
 
 
 def create_rmarkdown(data):
@@ -250,31 +249,31 @@ def create_rmarkdown(data):
         # populate template with metadata
         title = f"Open Government Data, {PROVIDER}"
         rmd = rmd.replace("{{ DOCUMENT_TITLE }}", title)
-        
+
         title = re.sub("\"", "\'", data.loc[idx, f"title.{LANGUAGE}"])
         rmd = rmd.replace("{{ DATASET_TITLE }}", title)
-      
+
         rmd = rmd.replace("{{ TODAY_DATE }}", TODAY_DATE)
         rmd = rmd.replace("{{ DATASET_IDENTIFIER }}", data.loc[idx, "identifier"])
-        
+
         description = data.loc[idx, f"description.{LANGUAGE}"]
         description = re.sub("\"", "\'", description)
         description = re.sub("\\\\", "|", description)
         rmd = rmd.replace("{{ DATASET_DESCRIPTION }}", description)
-        
+
         rmd = rmd.replace("{{ DATASET_METADATA }}", data.loc[idx, "metadata"])
         rmd = rmd.replace("{{ CONTACT }}", data.loc[idx, "contact"])
         rmd = rmd.replace("{{ DISTRIBUTION_COUNT }}", str(len(data.loc[idx, "distributions"])))
-        
+
         url = f'[Direct link by **{PROVIDER}** for dataset]({BASELINK_DATAPORTAL}{data.loc[idx, "name"]})'
         rmd = rmd.replace("{{ DATASHOP_LINK_PROVIDER }}", url)
-        
+
         if data.loc[idx, "url"] != None:
             org_name = f"organization.display_name.{LANGUAGE}"
             url = data.loc[idx, "url"]
             url = f'[Direct link by **{data.loc[idx, org_name]}** for dataset]({url})'
             rmd = rmd.replace("{{ DATASHOP_LINK_ORGANIZATION }}", url)
-            
+
         # create code blocks for all distributions
         code_block = []
         for id_dist, (dist, dist_link) in enumerate(zip(data.loc[idx, "distributions"], data.loc[idx, "distribution_links"])):
@@ -286,17 +285,17 @@ def create_rmarkdown(data):
         with open(f'{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{data.loc[idx, "id"]}.Rmd', 'w') as file:
             file.write("".join(rmd))
 
-            
+
 def get_header(dataset_count):
     """Retrieve header template and populate with date and count of data records"""
     with open(f"{TEMPLATE_FOLDER}{TEMPLATE_HEADER}") as file:
         header = file.read()
     gh_page = f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}/"
     header = re.sub("{{ GITHUB_PAGE }}", gh_page, header)
-    
+
     gh_link = f"https://www.github.com/{GITHUB_ACCOUNT}/{REPO_NAME}"
     header = re.sub("{{ GITHUB_REPO }}", gh_link, header)
-    
+
     header = re.sub("{{ PROVIDER }}", PROVIDER, header)
     header = re.sub("{{ DATA_PORTAL }}", PROVIDER_LINK, header)
     header = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), header)
@@ -309,7 +308,7 @@ def create_readme(dataset_count):
     with open(f"{TEMPLATE_FOLDER}{TEMPLATE_README}") as file:
         readme = file.read()
     readme = re.sub("{{ PROVIDER }}", PROVIDER, readme)
-    readme = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), readme)   
+    readme = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), readme)
     readme = re.sub("{{ DATA_PORTAL }}", PROVIDER_LINK, readme)
     gh_page = f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}/"
     readme = re.sub("{{ GITHUB_PAGE }}", gh_page, readme)
@@ -338,13 +337,13 @@ def create_overview(data, header):
 
         ds_link = f'{BASELINK_DATAPORTAL}{data.loc[idx, "name"]}'
         filename = data.loc[idx, "id"]
-        
+
         r_gh_link = f'[R GitHub]({baselink_r_gh}{filename}.Rmd)'
-        
+
         py_gh_link = f'[Python GitHub]({baselink_py_gh}{filename}.ipynb)'
         py_colab_link = f'[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]({baselink_py_colab}{filename}.ipynb)'
         # py_kaggle_link = f'[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)]({baselink_py_kaggle}{filename}.ipnyb)'
-        
+
         md_doc.append(f"| [{title_clean}]({ds_link}) | {py_colab_link} | {py_gh_link} | {r_gh_link} |\n")
 
     md_doc = "".join(md_doc)
@@ -353,7 +352,7 @@ def create_overview(data, header):
         file.write(md_doc)
 
 
-# CREATE CODE FILES --------------------------------------------------------------------------------------------------- # 
+# CREATE CODE FILES ---------------------------------------------------------- #
 
 all_packages = get_full_package_list()
 
@@ -368,38 +367,3 @@ create_rmarkdown(df)
 header = get_header(dataset_count=len(df))
 create_readme(dataset_count=len(df))
 create_overview(df, header)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
