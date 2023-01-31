@@ -18,8 +18,6 @@ import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 
-
-
 # CONSTANTS --------------------------------------------------------------------------------------------------- # 
 
 # set constants for data provider and data API
