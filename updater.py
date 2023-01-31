@@ -1,3 +1,5 @@
+# IMPORTS ----------------------------------------------------------------------------------------------------- # 
+
 import pandas as pd
 import numpy as np
 import requests
@@ -14,9 +16,6 @@ from bs4 import BeautifulSoup as bs4
 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
-
-print("Hello world... All import seem to be ok.")
-
 
 
 
@@ -82,7 +81,6 @@ REDUCED_FEATURESET = ['maintainer', 'issued', 'title_for_slug',
 
 
 # FUNCTIONS --------------------------------------------------------------------------------------------------- # 
-
 
 def get_full_package_list(limit=500, sleep=2):
     """Get full package list from CKAN API"""
