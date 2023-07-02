@@ -130,11 +130,17 @@ def clean_features(data):
     idx = data[data[f"title.{LANGUAGE}"] == ""].index
     data.loc[idx, f"title.{LANGUAGE}"] = data["title.en"]
 
+    # if titles are still empty try to fill in french
+    idx = data[data[f"title.{LANGUAGE}"] == ""].index
+    data.loc[idx, f"title.{LANGUAGE}"] = data["title.fr"]
+
     # remove HTML tags from description
-    data[f"description.{LANGUAGE}"] = data[f"description.{LANGUAGE}"].apply(lambda x: bs4(x, "html.parser").text)
+    data[f"description.{LANGUAGE}"] = data[f"description.{LANGUAGE}"].apply(
+        lambda x: bs4(x, "html.parser").text)
 
     # strip whitespace from title
-    data[f"title.{LANGUAGE}"] = data[f"title.{LANGUAGE}"].map(lambda x: x.strip())
+    data[f"title.{LANGUAGE}"] = data[f"title.{LANGUAGE}"].map(
+        lambda x: x.strip())
 
     return data
 
@@ -149,10 +155,12 @@ def prepare_data_for_codebooks(data):
 
     # iterate over datasets and create additional data for markdown and code cells
     for idx in tqdm(data.index):
-        md = [f"- **{k.capitalize()}** `{data.loc[idx, k]}`\n" for k in KEYS_DATASET]
+        md = [
+            f"- **{k.capitalize()}** `{data.loc[idx, k]}`\n" for k in KEYS_DATASET]
         data.loc[idx, "metadata"] = "".join(md)
 
-        contact_points = [x for x in data.loc[idx, "contact_points"][0].values() if x != {}]
+        contact_points = [x for x in data.loc[idx,
+                                              "contact_points"][0].values() if x != {}]
         data.loc[idx, "contact"] = " | ".join(contact_points)
 
         tmp_dists = []
@@ -163,11 +171,13 @@ def prepare_data_for_codebooks(data):
                 # filter description in specific language set by LANGUAGE
                 if dist["description"][LANGUAGE] != None:
                     # remove line breaks of description since these break the comment blocks
-                    dist["description"] = re.sub(r"[\n\r]+", " ", dist["description"][LANGUAGE])
+                    dist["description"] = re.sub(
+                        r"[\n\r]+", " ", dist["description"][LANGUAGE])
                 else:
                     dist["description"] = ""
             # get other metadata of distribution
-            md = [f"# {k.capitalize():<25}: {dist.get(k, None)}\n" for k in KEYS_DISTRIBUTIONS]
+            md = [
+                f"# {k.capitalize():<25}: {dist.get(k, None)}\n" for k in KEYS_DISTRIBUTIONS]
             tmp_dists.append("".join(md))
             # in a few cases the dataset has no download_url but rather is available at "url"
             csv_url = dist.get("download_url", dist["url"])
@@ -202,9 +212,12 @@ def create_python_notebooks(data):
         description = re.sub("\\\\", "|", description)
         py_nb = py_nb.replace("{{ DATASET_DESCRIPTION }}", description)
 
-        py_nb = py_nb.replace("{{ DATASET_IDENTIFIER }}", data.loc[idx, "identifier"])
-        py_nb = py_nb.replace("{{ DATASET_METADATA }}", re.sub("\"", "\'", data.loc[idx, "metadata"]))
-        py_nb = py_nb.replace("{{ DISTRIBUTION_COUNT }}", str(len(data.loc[idx, "distributions"])))
+        py_nb = py_nb.replace("{{ DATASET_IDENTIFIER }}",
+                              data.loc[idx, "identifier"])
+        py_nb = py_nb.replace("{{ DATASET_METADATA }}", re.sub(
+            "\"", "\'", data.loc[idx, "metadata"]))
+        py_nb = py_nb.replace("{{ DISTRIBUTION_COUNT }}", str(
+            len(data.loc[idx, "distributions"])))
 
         url = f'[Direct link by {PROVIDER} for dataset]({BASELINK_DATAPORTAL}{data.loc[idx, "name"]})'
         py_nb = py_nb.replace("{{ DATASHOP_LINK_PROVIDER }}", url)
@@ -254,7 +267,8 @@ def create_rmarkdown(data):
         rmd = rmd.replace("{{ DATASET_TITLE }}", title)
 
         rmd = rmd.replace("{{ TODAY_DATE }}", TODAY_DATE)
-        rmd = rmd.replace("{{ DATASET_IDENTIFIER }}", data.loc[idx, "identifier"])
+        rmd = rmd.replace("{{ DATASET_IDENTIFIER }}",
+                          data.loc[idx, "identifier"])
 
         description = data.loc[idx, f"description.{LANGUAGE}"]
         description = re.sub("\"", "\'", description)
@@ -263,7 +277,8 @@ def create_rmarkdown(data):
 
         rmd = rmd.replace("{{ DATASET_METADATA }}", data.loc[idx, "metadata"])
         rmd = rmd.replace("{{ CONTACT }}", data.loc[idx, "contact"])
-        rmd = rmd.replace("{{ DISTRIBUTION_COUNT }}", str(len(data.loc[idx, "distributions"])))
+        rmd = rmd.replace("{{ DISTRIBUTION_COUNT }}", str(
+            len(data.loc[idx, "distributions"])))
 
         url = f'[Direct link by **{PROVIDER}** for dataset]({BASELINK_DATAPORTAL}{data.loc[idx, "name"]})'
         rmd = rmd.replace("{{ DATASHOP_LINK_PROVIDER }}", url)
@@ -326,12 +341,14 @@ def create_overview(data, header):
 
     md_doc = []
     md_doc.append(header)
-    md_doc.append(f"| Title (abbreviated to {TITLE_MAX_CHARS} chars) | Python Colab | Python GitHub | R GitHub |\n")
+    md_doc.append(
+        f"| Title (abbreviated to {TITLE_MAX_CHARS} chars) | Python Colab | Python GitHub | R GitHub |\n")
     md_doc.append("| :-- | :-- | :-- | :-- |\n")
 
     for idx in tqdm(data.index):
         # remove square brackets from title, since these break markdown links
-        title_clean = data.loc[idx, f"title.{LANGUAGE}"].replace("[", " ").replace("]", " ")
+        title_clean = data.loc[idx, f"title.{LANGUAGE}"].replace(
+            "[", " ").replace("]", " ")
         if len(title_clean) > TITLE_MAX_CHARS:
             title_clean = title_clean[:TITLE_MAX_CHARS] + "…"
 
@@ -344,7 +361,8 @@ def create_overview(data, header):
         py_colab_link = f'[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]({baselink_py_colab}{filename}.ipynb)'
         # py_kaggle_link = f'[![Kaggle](https://kaggle.com/static/images/open-in-kaggle.svg)]({baselink_py_kaggle}{filename}.ipnyb)'
 
-        md_doc.append(f"| [{title_clean}]({ds_link}) | {py_colab_link} | {py_gh_link} | {r_gh_link} |\n")
+        md_doc.append(
+            f"| [{title_clean}]({ds_link}) | {py_colab_link} | {py_gh_link} | {r_gh_link} |\n")
 
     md_doc = "".join(md_doc)
 
