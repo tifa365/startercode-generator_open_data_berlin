@@ -1,5 +1,9 @@
-pandas
+beautifulsoup4
+ipykernel
+jupyter
+matplotlib
+missingno
 numpy
+pandas
 requests
 tqdm
-beautifulsoup4
