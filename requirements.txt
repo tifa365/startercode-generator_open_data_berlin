@@ -5,5 +5,3 @@ tqdm
 beautifulsoup4
 ipykernel
 jupyter
-matplotlib
-missingno
