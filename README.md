@@ -21,7 +21,7 @@ The system works with two repos.
 - The GitHub Action workflow included in this repo instantiates a container, installs the necessary dependencies, clones the repo, and executes the script. 
 - Once the notebooks are created the workflow will push these to a **second repo** that you can make available for your users.
 
-The script works with templates that are stored in – you gessed it – `_templates`. You easily can adapt these according to your ideas. Just make sure that you keep the necessary placeholders (marked with double curly brackets) in the templates. The script will replace them with values from the metadata JSON.
+The script works with templates that are stored in – you guessed it – `_templates`. You easily can adapt these according to your ideas. Just make sure that you keep the necessary placeholders (marked with double curly brackets) in the templates. The script will replace them with values from the metadata JSON.
 
 The code works out of the box with the [metadata API opendata.swiss](https://opendata.swiss/api/3/action/current_package_list_with_resources). 
 
@@ -41,9 +41,28 @@ The code works out of the box with the [metadata API opendata.swiss](https://ope
 -   In your GitHub account go to `Settings > Secrets` and create a new secret by clicking `New repository secret`.
     -   Set the name to `PAT` and paste the token you just copied. If you name your secret differently you need to adapt the workflow file accordingly.
 -   Manually trigger the GitHub Action workflow and check the results.
--   Do not forget to add a licence to your second repo.
+-   Do not forget to add a license to your second repo.
 
+## Dependencies
 
+The repository contains an ```environment.yml``` and an ```requirements.txt``` file,
+which can be utilized by
+[conda](https://docs.conda.io/projects/conda/en/stable/user-guide/install/index.html)
+or pip. To use conda to install the dependencies do the following:
+
+```bash
+# To create the environment:
+conda env create --file environment.yml
+
+# To activate the environment:
+conda activate opendataswiss
+
+# To update the environment after change of the environment.yml
+conda env update --file environment.yml  --prune
+
+# To delete the environment:
+conda remove --name opendataswiss --all
+```
 ## Good to know
 - We at Team Data of the Statistical Office of the Canton Zürich use the same code and workflow [here](https://github.com/openZH/startercode-generator_openZH).
 - The wonderful people of the [OGD team Thurgau](https://ogd.tg.ch/) have created a [similar project](https://github.com/ogdtg/starter-code-ogdtg).
