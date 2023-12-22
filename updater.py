@@ -18,7 +18,7 @@ warnings.simplefilter(action="ignore", category=FutureWarning)
 
 # CONSTANTS ------------------------------------------------------------------ #
 
-# set constants for data provider and data API
+# Set constants for data provider and data API.
 PROVIDER = "opendata.swiss"
 PROVIDER_LINK = "https://opendata.swiss/"
 BASELINK_DATAPORTAL = "https://opendata.swiss/de/dataset/"
@@ -27,7 +27,7 @@ CKAN_API_LINK = (
 )
 LANGUAGE = "de"
 
-# set constants in regard to GitHub account and repo
+# Set constants in regard to GitHub account and repo.
 GITHUB_ACCOUNT = "rnckp"
 REPO_NAME = "starter-code_opendataswiss"
 REPO_BRANCH = "main"
@@ -35,11 +35,11 @@ REPO_RMARKDOWN_OUTPUT = "01_r-markdown/"
 REPO_PYTHON_OUTPUT = "02_python/"
 TEMP_PREFIX = "_work/"
 
-# set local folders and file names
+# Set local folders and file names.
 TEMPLATE_FOLDER = "_templates/"
-# template for the README.md in the repo
+# Template for the README.md in the repo.
 TEMPLATE_README = "template_md_readme.md"
-# header for list overview that is rendered as a GitHub page
+# Header for list overview that is rendered as a GitHub page.
 TEMPLATE_HEADER = "template_md_header.md"
 TEMPLATE_PYTHON = "template_python.ipynb"
 TEMPLATE_RMARKDOWN = "template_rmarkdown.Rmd"
@@ -48,13 +48,13 @@ METADATA_FOLDER = "_metadata_json/"
 TODAY_DATE = datetime.today().strftime("%Y-%m-%d")
 TODAY_DATETIME = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
 
-# set max length of dataset title in markdown table
+# Set max length of dataset title in markdown table.
 TITLE_MAX_CHARS = 200
 
-# sort markdown table by this feature
+# Sort markdown table by this feature.
 SORT_TABLE_BY = f"title.{LANGUAGE}"
 
-# select keys in metadata for dataset and distributions
+# Select keys in metadata for dataset and distributions.
 KEYS_DATASET = [
     "publisher",
     f"organization.display_name.{LANGUAGE}",
@@ -68,7 +68,7 @@ KEYS_DATASET = [
 ]
 KEYS_DISTRIBUTIONS = ["package_id", "description", "issued", "modified", "rights"]
 
-# select relevant column names to reduce dataset
+# Select relevant column names to reduce dataset.
 REDUCED_FEATURESET = [
     "maintainer",
     "issued",
@@ -159,29 +159,29 @@ def filter_csv(data):
 
 def clean_features(data):
     """Clean various features"""
-    # reduce publisher data to name
+    # Reduce publisher data to name-
     data.publisher = data.publisher.apply(lambda x: json.loads(x)["name"])
 
-    # reduce tags to tag names
+    # Reduce tags to tag names.
     data.tags = data.tags.apply(lambda x: [tag["name"] for tag in x])
 
-    # replace empty urls with NA message
+    # Replace empty urls with NA message.
     data[data["organization.url"] == ""]["organization.url"] = "None provided"
 
-    # if title in target language does not exist try to fill in english title
+    # If title in target language does not exist try to fill in english title.
     idx = data[data[f"title.{LANGUAGE}"] == ""].index
     data.loc[idx, f"title.{LANGUAGE}"] = data["title.en"]
 
-    # if titles are still empty try to fill in french
+    # If titles are still empty try to fill in french.
     idx = data[data[f"title.{LANGUAGE}"] == ""].index
     data.loc[idx, f"title.{LANGUAGE}"] = data["title.fr"]
 
-    # remove HTML tags from description
+    # Remove HTML tags from description.
     data[f"description.{LANGUAGE}"] = data[f"description.{LANGUAGE}"].apply(
         lambda x: bs4(x, "html.parser").text
     )
 
-    # strip whitespace from title
+    # Strip whitespace from title.
     data[f"title.{LANGUAGE}"] = data[f"title.{LANGUAGE}"].map(lambda x: x.strip())
 
     return data
@@ -189,50 +189,53 @@ def clean_features(data):
 
 def prepare_data_for_codebooks(data):
     """Prepare metadata from catalogue in order to create the code files"""
-    # add new features to save prepared data
+    # Add new features to save prepared data.
     data["metadata"] = None
     data["contact"] = None
     data["distributions"] = None
     data["distribution_links"] = None
 
-    # iterate over datasets and create additional data for markdown and code cells
+    # Iterate over datasets and create additional data for markdown and code cells.
     for idx in tqdm(data.index):
         md = [f"- **{k.capitalize()}** `{data.loc[idx, k]}`\n" for k in KEYS_DATASET]
         data.loc[idx, "metadata"] = "".join(md)
 
-        contact_points = [
-            x for x in data.loc[idx, "contact_points"][0].values() if x != {}
-        ]
-        data.loc[idx, "contact"] = " | ".join(contact_points)
+        if data.loc[idx, "contact_points"] != []:
+            contact_points = [
+                x for x in data.loc[idx, "contact_points"][0].values() if x != {}
+            ]
+            data.loc[idx, "contact"] = " | ".join(contact_points)
+        else:
+            data.loc[idx, "contact"] = "No contact information provided."
 
         tmp_dists = []
         tmp_links = []
         for dist in data.loc[idx, "resources"]:
-            # some descriptions are strings rather than dicts with language keys
+            # Some descriptions are strings rather than dicts with language keys.
             if isinstance(dist["description"], dict):
-                # filter description in specific language set by LANGUAGE
-                if dist["description"][LANGUAGE] != None:
-                    # remove line breaks of description since these break the comment blocks
+                # Filter description in specific language set by LANGUAGE.
+                if dist["description"][LANGUAGE] is not None:
+                    # Remove line breaks of description since these break the comment blocks.
                     dist["description"] = re.sub(
                         r"[\n\r]+", " ", dist["description"][LANGUAGE]
                     )
                 else:
                     dist["description"] = ""
-            # get other metadata of distribution
+            # Get other metadata of distribution.
             md = [
                 f"# {k.capitalize():<25}: {dist.get(k, None)}\n"
                 for k in KEYS_DISTRIBUTIONS
             ]
             tmp_dists.append("".join(md))
-            # in a few cases the dataset has no download_url but rather is available at "url"
+            # In a few cases the dataset has no download_url but rather is available at "url".
             csv_url = dist.get("download_url", dist["url"])
             tmp_links.append(csv_url)
 
-        # use .at[] – https://stackoverflow.com/a/53299945/7117003
+        # Use .at[] – https://stackoverflow.com/a/53299945/7117003
         data.at[idx, "distributions"] = tmp_dists
         data.at[idx, "distribution_links"] = tmp_links
 
-    # sort values for table
+    # Sort values for table.
     data.sort_values(f"{SORT_TABLE_BY}", inplace=True)
     data.reset_index(drop=True, inplace=True)
 
@@ -242,11 +245,10 @@ def prepare_data_for_codebooks(data):
 def create_python_notebooks(data):
     """Create Jupyter Notebooks with Python starter code"""
     for idx in tqdm(data.index):
-        # open template
         with open(f"{TEMPLATE_FOLDER}{TEMPLATE_PYTHON}") as file:
             py_nb = file.read()
 
-        # populate template with metadata
+        # Populate template with metadata.
         py_nb = py_nb.replace("{{ PROVIDER }}", PROVIDER)
 
         title = re.sub('"', "'", data.loc[idx, f"title.{LANGUAGE}"])
@@ -268,7 +270,7 @@ def create_python_notebooks(data):
         url = f'[Direct link by {PROVIDER} for dataset]({BASELINK_DATAPORTAL}{data.loc[idx, "name"]})'
         py_nb = py_nb.replace("{{ DATASHOP_LINK_PROVIDER }}", url)
 
-        if data.loc[idx, "url"] != None:
+        if data.loc[idx, "url"] is not None:
             org_name = f"organization.display_name.{LANGUAGE}"
             url = data.loc[idx, "url"]
             url = f"[Direct link by {data.loc[idx, org_name]} for dataset]({url})"
@@ -278,12 +280,12 @@ def create_python_notebooks(data):
 
         py_nb = json.loads(py_nb, strict=False)
 
-        # find code cell for dataset imports
+        # Find code cell for dataset imports.
         for id_cell, cell in enumerate(py_nb["cells"]):
             if cell["id"] == "0":
                 dist_cell_idx = id_cell
                 break
-        # iterate over csv distributions and create metadata comments and code
+        # Iterate over csv distributions and create metadata comments and code.
         code_block = []
         for id_dist, (dist, dist_link) in enumerate(
             zip(data.loc[idx, "distributions"], data.loc[idx, "distribution_links"])
@@ -293,11 +295,11 @@ def create_python_notebooks(data):
             )
             code = "".join([f"{line}\n" for line in code.split("\n")])
             code_block.append(code)
-        # populate code block with data for all distributions
+        # Populate code block with data for all distributions.
         code_block = "".join(code_block)
         py_nb["cells"][dist_cell_idx]["source"] = code_block
 
-        # save to disk
+        # Save to disk.
         with open(
             f'{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{data.loc[idx, "id"]}.ipynb',
             "w",
@@ -309,11 +311,10 @@ def create_python_notebooks(data):
 def create_rmarkdown(data):
     """Create R Markdown files with R starter code"""
     for idx in tqdm(data.index):
-        # open template
         with open(f"{TEMPLATE_FOLDER}{TEMPLATE_RMARKDOWN}") as file:
             rmd = file.read()
 
-        # populate template with metadata
+        # Populate template with metadata.
         title = f"Open Government Data, {PROVIDER}"
         rmd = rmd.replace("{{ DOCUMENT_TITLE }}", title)
 
@@ -337,13 +338,13 @@ def create_rmarkdown(data):
         url = f'[Direct link by **{PROVIDER}** for dataset]({BASELINK_DATAPORTAL}{data.loc[idx, "name"]})'
         rmd = rmd.replace("{{ DATASHOP_LINK_PROVIDER }}", url)
 
-        if data.loc[idx, "url"] != None:
+        if data.loc[idx, "url"] is not None:
             org_name = f"organization.display_name.{LANGUAGE}"
             url = data.loc[idx, "url"]
             url = f"[Direct link by **{data.loc[idx, org_name]}** for dataset]({url})"
             rmd = rmd.replace("{{ DATASHOP_LINK_ORGANIZATION }}", url)
 
-        # create code blocks for all distributions
+        # Create code blocks for all distributions.
         code_block = []
         for id_dist, (dist, dist_link) in enumerate(
             zip(data.loc[idx, "distributions"], data.loc[idx, "distribution_links"])
@@ -354,7 +355,7 @@ def create_rmarkdown(data):
             code_block.append(code)
         rmd = rmd.replace("{{ DISTRIBUTIONS }}", "".join(code_block))
 
-        # save to disk
+        # Save to disk.
         with open(
             f'{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{data.loc[idx, "id"]}.Rmd',
             "w",
@@ -409,7 +410,7 @@ def create_overview(data, header):
     md_doc.append("| :-- | :-- | :-- | :-- |\n")
 
     for idx in tqdm(data.index):
-        # remove square brackets from title, since these break markdown links
+        # Remove square brackets from title, since these break markdown links.
         title_clean = (
             data.loc[idx, f"title.{LANGUAGE}"].replace("[", " ").replace("]", " ")
         )
