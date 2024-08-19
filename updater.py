@@ -4,7 +4,7 @@
 # In[13]:
 
 
-# IMPORTS --------------------------------------------------------------------- #
+# IMPORTS -------------------------------------------------------------------- #
 
 import pandas as pd
 import numpy as np
@@ -518,7 +518,7 @@ def main():
     print(f"Number of packages removed by filtering: {difference}")
 
     # Clean features and prepare data
-    data = clean_features(all_packages)
+    df = clean_features(df)
     df = prepare_data_for_codebooks(df)
 
     # Create notebooks
