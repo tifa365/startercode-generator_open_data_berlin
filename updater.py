@@ -518,7 +518,7 @@ def main():
     difference = packages_before - packages_after
     print(f"Number of packages removed by filtering: {difference}")
 
-    # Clean features and prepare data
+    # Clean features and prepare the data
     df = clean_features(df)
     df = prepare_data_for_codebooks(df)
 
