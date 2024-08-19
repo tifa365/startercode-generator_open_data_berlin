@@ -1,13 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[13]:
-
-
 # IMPORTS -------------------------------------------------------------------- #
 
 import pandas as pd
 import numpy as np
+import os
 import requests
 import json
 import re
@@ -218,19 +213,26 @@ def clean_features(data):
     return data
 
 
-# In[18]:
-
-
 # PREPARE NOTEBOOKS ------------------------------------------------------------------ #
 
 
-def prepare_data_for_codebooks(data, num_datasets=len(df)):
+def prepare_data_for_codebooks(data, limit=None):
     """
     Prepares metadata from Berlin Open Data catalogue by creating formatted strings
     for metadata, contact information, and distributions. It also extracts distribution links.
+
+    Args:
+    data (pd.DataFrame): The input DataFrame containing the datasets.
+    limit (int, optional): If provided, limits the number of datasets to process.
+
+    Returns:
+    pd.DataFrame: The processed DataFrame.
     """
-    # Limit the data to the specified number of datasets
-    data = df.head(num_datasets).copy()
+    # Optionally limit the data to the specified number of datasets
+    if limit is not None:
+        data = data.head(limit).copy()
+    else:
+        data = data.copy()
 
     # Add new features to save prepared data
     data["metadata"] = None
@@ -512,6 +514,7 @@ def main():
     packages_before = all_packages.shape[0]
     print(f"Number of packages before filtering: {packages_before}")
     df = filter_csv(all_packages)
+    print(df.head(2))
     packages_after = df.shape[0]
     print(f"Number of packages after filtering: {packages_after}")
     difference = packages_before - packages_after
@@ -532,4 +535,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
