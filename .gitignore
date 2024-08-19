@@ -9,3 +9,14 @@
 markdown/.Rhistory
 
 _bak/update_startercode.py
+change_to_berlin_opendata.md
+
+# Files
+berlin_distributions.csv
+berlin_keys_dataset.csv
+berlin_open_data_packages.csv
+berlin_open_data_startercode.ipynb
+berlin_reduced_featureset.csv
+change_to_berlin_opendata.md
+notebooks/
+

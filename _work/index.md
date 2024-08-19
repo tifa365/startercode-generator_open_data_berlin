@@ -1,6 +1,6 @@
-# Preconfigured starter code files for all CSV datasets of opendata.swiss
+# Preconfigured starter code files for all CSV datasets of daten.berlin.de/datensaetze
 
-### Open any tabular dataset of **opendata.swiss** with one click and **get a fully configured Python Jupyter Notebook or R Markdown file**. 
+### Open any tabular dataset of **daten.berlin.de/datensaetze** with one click and **get a fully configured Python Jupyter Notebook or R Markdown file**. 
 
 - The code files are **set with relevant metadata, descriptions, data links, and some starter code.** 
 - The idea of this experiment is **that you immediately can start analyzing the data with R or Python.** 
@@ -10,9 +10,9 @@
 
 Feedback is always very welcome – simply open an issue.
 
-👉 Here is the link to the [repository](https://www.github.com/rnckp/starter-code-opendataswiss) that contains currently 2 x 2545 code files (1 x R, 1 x Python) for all data sets (*«packages»*) that are available on [opendata.swiss](https://opendata.swiss/) and that contain one or several CSV distributions. This website is build from this repo.
+👉 Here is the link to the [repository](https://github.com/tifa365/startercode-generator_open_data_berlin) that contains currently a lot of (1 x R, 1 x Python) for all data sets (*«packages»*) that are available on [daten.berlin.de/datensaetze](https://daten.berlin.de/datensaetze) and that contain one or several CSV distributions. This website is build from this repo.
 
-<sub>Latest update: **2023-01-16**</sub><br>
+<sub>Latest update: **2024-07-07**</sub><br>
 <sub>For all data licenses please refer to each data set's link (provided in list as well as in the notebooks).</sub>
 
 
