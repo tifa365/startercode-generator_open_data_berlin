@@ -465,13 +465,11 @@ def get_header(dataset_count):
     return header
 
 
-def create_overview(data):
+def create_overview(data, header):
     """Create README with link table."""
-    baselink_r_gh = f"https://github.com/{GITHUB_ACCOUNT}/{REPO_NAME}/blob/{REPO_BRANCH}/{REPO_R_MARKDOWN_OUTPUT}"
+    baselink_r_gh = f"https://github.com/{GITHUB_ACCOUNT}/{REPO_NAME}/blob/{REPO_BRANCH}/{REPO_RMARKDOWN_OUTPUT}"
     baselink_py_gh = f"https://github.com/{GITHUB_ACCOUNT}/{REPO_NAME}/blob/{REPO_BRANCH}/{REPO_PYTHON_OUTPUT}"
     baselink_py_colab = f"https://githubtocolab.com/{GITHUB_ACCOUNT}/{REPO_NAME}/blob/{REPO_BRANCH}/{REPO_PYTHON_OUTPUT}"
-
-    header = get_header(len(data))
 
     md_doc = []
     md_doc.append(header)
@@ -481,20 +479,20 @@ def create_overview(data):
     md_doc.append("| :-- | :-- | :-- | :-- | :-- |\n")
 
     for idx in tqdm(data.index):
-        identifier = data.loc[idx, "identifier"]
+        identifier = data.loc[idx, "id"]
         # Remove square brackets from title, since these break markdown links.
         title_clean = data.loc[idx, "title"].replace("[", " ").replace("]", " ")
         if len(title_clean) > TITLE_MAX_CHARS:
             title_clean = title_clean[:TITLE_MAX_CHARS] + "…"
 
-        ds_link = f"{BASELINK_DATASHOP}{identifier}"
+        ds_link = f"{BASELINK_DATAPORTAL}{identifier}"
 
         r_gh_link = f"[R GitHub]({baselink_r_gh}{identifier}.Rmd)"
         py_gh_link = f"[Python GitHub]({baselink_py_gh}{identifier}.ipynb)"
         py_colab_link = f"[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]({baselink_py_colab}{identifier}.ipynb)"
 
         md_doc.append(
-            f"| {identifier.split('@')[0]} | [{title_clean}]({ds_link}) | {py_colab_link} | {py_gh_link} | {r_gh_link} |\n"
+            f"| {identifier} | [{title_clean}]({ds_link}) | {py_colab_link} | {py_gh_link} | {r_gh_link} |\n"
         )
 
     md_doc = "".join(md_doc)
