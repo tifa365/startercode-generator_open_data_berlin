@@ -382,7 +382,7 @@ def create_python_notebooks(data):
 # In[20]:
 
 
-# CREATE PYTHON NOTEBOOKS ------------------------------------------------------------------ #
+# CREATE R NOTEBOOKS ------------------------------------------------------------------ #
 
 
 def create_r_notebooks(data):
@@ -518,7 +518,7 @@ def main():
     print(f"Number of packages removed by filtering: {difference}")
 
     # Clean features and prepare data
-    df = clean_features(df)
+    data = clean_features(all_packages)
     df = prepare_data_for_codebooks(df)
 
     # Create notebooks
