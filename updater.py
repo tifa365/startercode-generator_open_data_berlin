@@ -368,7 +368,7 @@ def create_python_notebooks(data):
         py_nb["cells"][dist_cell_idx]["source"] = code_block
 
         # Save to disk.
-        with open(f"{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{identifier}.ipynb", "w") as file:
+        with open(f"{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{id}.ipynb", "w") as file:
             file.write(json.dumps(py_nb))
 
 
@@ -433,7 +433,7 @@ def create_r_notebooks(data):
         rmd = rmd.replace("{{ DISTRIBUTIONS }}", "".join(code_block))
 
         # Save to disk.
-        with open(f"{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{identifier}.Rmd", "w") as file:
+        with open(f"{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{id}.Rmd", "w") as file:
             file.write("".join(rmd))
 
 
