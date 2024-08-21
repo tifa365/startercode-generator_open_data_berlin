@@ -42,7 +42,7 @@ TEMP_PREFIX = "_work/"
 # Set local folders and file names.
 TEMPLATE_FOLDER = "_templates/"
 # Template for the README.md in the repo.
-TEMPLATE_README = "template_md_readme.md"
+# TEMPLATE_README = "template_md_readme.md"
 # Header for list overview that is rendered as a GitHub page.
 TEMPLATE_HEADER = "template_md_header.md"
 TEMPLATE_PYTHON = "template_python.ipynb"
@@ -459,16 +459,16 @@ def get_header(dataset_count):
         header = file.read()
 
     # Replace all variables
-    content = re.sub("{{ PROVIDER }}", PROVIDER, content)
+    content = re.sub("{{ PROVIDER }}", PROVIDER, header)
     content = re.sub(
         "{{ GITHUB_REPO }}", f"https://github.com/{GITHUB_ACCOUNT}/{REPO_NAME}", content
     )
     content = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), content)
     content = re.sub("{{ DATA_PORTAL }}", PROVIDER_LINK, content)
     content = re.sub("{{ TODAY_DATE }}", TODAY_DATETIME, content)
-    content = re.sub(
-        "{{ GITHUB_PAGE }}", f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}", content
-    )
+    # content = re.sub(
+    #     "{{ GITHUB_PAGE }}", f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}", content
+    # )
 
     return content
 
