@@ -454,9 +454,9 @@ def create_r_notebooks(data):
 
 
 def get_header(dataset_count):
-    """Retrieve README template and populate with all necessary variables."""
-    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_README}") as file:
-        content = file.read()
+    """Retrieve header template and populate with date and count of data records."""
+    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_HEADER}") as file:
+        header = file.read()
 
     # Replace all variables
     content = re.sub("{{ PROVIDER }}", PROVIDER, content)
@@ -466,6 +466,9 @@ def get_header(dataset_count):
     content = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), content)
     content = re.sub("{{ DATA_PORTAL }}", PROVIDER_LINK, content)
     content = re.sub("{{ TODAY_DATE }}", TODAY_DATETIME, content)
+    content = re.sub(
+        "{{ GITHUB_PAGE }}", f"https://{GITHUB_ACCOUNT}.github.io/{REPO_NAME}", content
+    )
 
     return content
 
