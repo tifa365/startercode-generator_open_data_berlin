@@ -31,7 +31,7 @@ CKAN_API_LINK = (
 
 # Set constants in regard to GitHub account and repo.
 GITHUB_ACCOUNT = "tifa365"
-REPO_NAME = "starter-code_open_data_berlin"
+REPO_NAME = "starter-code-open_data_berlin"
 REPO_BRANCH = "main"
 REPO_RMARKDOWN_OUTPUT = "01_r-markdown/"
 REPO_PYTHON_OUTPUT = "02_python/"
@@ -368,8 +368,13 @@ def create_python_notebooks(data):
         py_nb["cells"][dist_cell_idx]["source"] = code_block
 
         # Save to disk.
-        with open(f"{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{data.loc[idx, 'id']}.ipynb", "w", encoding='utf-8') as file:
+        with open(
+            f"{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{data.loc[idx, 'id']}.ipynb",
+            "w",
+            encoding="utf-8",
+        ) as file:
             json.dump(py_nb, file, ensure_ascii=False, indent=2)
+
 
 # CREATE R NOTEBOOKS ------------------------------------------------------------------ #
 
@@ -432,7 +437,11 @@ def create_r_notebooks(data):
         rmd = rmd.replace("{{ DISTRIBUTIONS }}", "".join(code_block))
 
         # Save to disk.
-        with open(f"{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{data.loc[idx, 'id']}.Rmd", "w", encoding='utf-8') as file:
+        with open(
+            f"{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{data.loc[idx, 'id']}.Rmd",
+            "w",
+            encoding="utf-8",
+        ) as file:
             file.write(rmd)
 
 
