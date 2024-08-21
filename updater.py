@@ -33,9 +33,8 @@ CKAN_API_LINK = (
 GITHUB_ACCOUNT = "tifa365"
 REPO_NAME = "starter-code_open_data_berlin"
 REPO_BRANCH = "main"
-NOTEBOOKS_FOLDER = "notebooks/"
-REPO_RMARKDOWN_OUTPUT = NOTEBOOKS_FOLDER + "01_r-markdown/"
-REPO_PYTHON_OUTPUT = NOTEBOOKS_FOLDER + "02_python/"
+REPO_RMARKDOWN_OUTPUT = "01_r-markdown/"
+REPO_PYTHON_OUTPUT = "02_python/"
 TEMP_PREFIX = "_work/"
 
 
@@ -306,11 +305,7 @@ def prepare_data_for_codebooks(data, limit=None):
 
 
 def create_python_notebooks(data):
-    """Create Jupyter Notebooks with Python starter code and save to 'notebooks' folder"""
-
-    # Create 'notebooks/python' folder if it doesn't exist
-    python_notebooks_folder = os.path.join(os.getcwd(), "notebooks", "python")
-    os.makedirs(python_notebooks_folder, exist_ok=True)
+    """Create Jupyter Notebooks with Python starter code and save to assigned folders"""
 
     for idx in tqdm(data.index, desc="Creating notebooks"):
         with open(f"{TEMPLATE_FOLDER}{TEMPLATE_PYTHON}") as file:
@@ -372,16 +367,9 @@ def create_python_notebooks(data):
         code_block = "".join(code_block)
         py_nb["cells"][dist_cell_idx]["source"] = code_block
 
-        # Save to disk in the 'notebooks' folder
-        notebook_filename = f'{data.loc[idx, "id"]}.ipynb'
-        notebook_path = os.path.join(python_notebooks_folder, notebook_filename)
-        with open(notebook_path, "w", encoding="utf-8") as file:
-            json.dump(py_nb, file, ensure_ascii=False, indent=2)
-
-    print(f"Notebooks saved in: {python_notebooks_folder}")
-
-
-# In[20]:
+        # Save to disk.
+        with open(f"{TEMP_PREFIX}{REPO_PYTHON_OUTPUT}{identifier}.ipynb", "w") as file:
+            file.write(json.dumps(py_nb))
 
 
 # CREATE R NOTEBOOKS ------------------------------------------------------------------ #
@@ -444,13 +432,9 @@ def create_r_notebooks(data):
 
         rmd = rmd.replace("{{ DISTRIBUTIONS }}", "".join(code_block))
 
-        # Save to disk in the 'notebooks/rmarkdown' folder
-        notebook_filename = f'{data.loc[idx, "id"]}.Rmd'
-        notebook_path = os.path.join(r_notebooks_folder, notebook_filename)
-        with open(notebook_path, "w", encoding="utf-8") as file:
-            file.write(rmd)
-
-    print(f"R notebooks saved in: {r_notebooks_folder}")
+        # Save to disk.
+        with open(f"{TEMP_PREFIX}{REPO_RMARKDOWN_OUTPUT}{identifier}.Rmd", "w") as file:
+            file.write("".join(rmd))
 
 
 def get_header(dataset_count):
