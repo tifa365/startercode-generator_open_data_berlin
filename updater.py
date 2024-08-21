@@ -31,7 +31,7 @@ CKAN_API_LINK = (
 
 # Set constants in regard to GitHub account and repo.
 GITHUB_ACCOUNT = "tifa365"
-REPO_NAME = "starter-code_opendataberlin"
+REPO_NAME = "starter-code_open_data_berlin"
 REPO_BRANCH = "main"
 NOTEBOOKS_FOLDER = "notebooks/"
 REPO_RMARKDOWN_OUTPUT = NOTEBOOKS_FOLDER + "01_r-markdown/"
@@ -453,16 +453,21 @@ def create_r_notebooks(data):
     print(f"R notebooks saved in: {r_notebooks_folder}")
 
 
-# In[21]:
-
-
 def get_header(dataset_count):
-    """Retrieve header template and populate with date and count of data records."""
-    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_HEADER}") as file:
-        header = file.read()
-    header = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), header)
-    header = re.sub("{{ TODAY_DATE }}", TODAY_DATETIME, header)
-    return header
+    """Retrieve README template and populate with all necessary variables."""
+    with open(f"{TEMPLATE_FOLDER}{TEMPLATE_README}") as file:
+        content = file.read()
+
+    # Replace all variables
+    content = re.sub("{{ PROVIDER }}", PROVIDER, content)
+    content = re.sub(
+        "{{ GITHUB_REPO }}", f"https://github.com/{GITHUB_ACCOUNT}/{REPO_NAME}", content
+    )
+    content = re.sub("{{ DATASET_COUNT }}", str(int(dataset_count)), content)
+    content = re.sub("{{ DATA_PORTAL }}", PROVIDER_LINK, content)
+    content = re.sub("{{ TODAY_DATE }}", TODAY_DATETIME, content)
+
+    return content
 
 
 def create_overview(data, header):
@@ -499,9 +504,6 @@ def create_overview(data, header):
 
     with open(f"{TEMP_PREFIX}README.md", "w") as file:
         file.write(md_doc)
-
-
-# In[22]:
 
 
 def main():
