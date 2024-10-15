@@ -395,7 +395,7 @@ def create_r_notebooks(data):
             rmd = file.read()
 
         # Populate template with metadata
-        title = f"Open Data Berlin, {PROVIDER}"
+        title = f"Open Government Data, {PROVIDER}"
         rmd = rmd.replace("{{ DOCUMENT_TITLE }}", title)
 
         title = re.sub('"', "'", data.loc[idx, "title"])
