@@ -48,7 +48,9 @@ TEMPLATE_PYTHON = "template_python.ipynb"
 TEMPLATE_RMARKDOWN = "template_rmarkdown.Rmd"
 METADATA_FOLDER = "_metadata_json/"
 
+# Get today's date in YYYY-MM-DD format
 TODAY_DATE = datetime.today().strftime("%Y-%m-%d")
+# Get today's date and time in YYYY-MM-DD HH:MM:SS format
 TODAY_DATETIME = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
 
 # Set max length of dataset title in markdown table.
@@ -314,7 +316,9 @@ def create_python_notebooks(data):
         # Populate template with metadata
         py_nb = py_nb.replace("{{ PROVIDER }}", PROVIDER)
 
+        # Replace double quotes in the dataset title with single quotes for consistency
         title = re.sub('"', "'", data.loc[idx, "title"])
+        # Substitute the placeholder in the notebook template with the sanitized title
         py_nb = py_nb.replace("{{ DATASET_TITLE }}", title)
 
         description = data.loc[idx, "notes"]
@@ -391,10 +395,13 @@ def create_r_notebooks(data):
             rmd = file.read()
 
         # Populate template with metadata
-        rmd = rmd.replace("{{ PROVIDER }}", PROVIDER)
+        title = f"Open Data Berlin, {PROVIDER}"
+        rmd = rmd.replace("{{ DOCUMENT_TITLE }}", title)
 
         title = re.sub('"', "'", data.loc[idx, "title"])
         rmd = rmd.replace("{{ DATASET_TITLE }}", title)
+
+        rmd = rmd.replace("{{ TODAY_DATE }}", TODAY_DATE)
 
         description = data.loc[idx, "notes"]
         description = re.sub('"', "'", description)
